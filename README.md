@@ -6,5 +6,13 @@ I have been working with the WBE Card readers for some time now and have decided
 # Supported Devices
 
 ## WBM-5000 Motorized Card Reader/Writer
-![alt WBM98xx](https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM1300.jpg)
+![alt WBM98xx](https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM5000.jpg)
 [http://www.wbe.com.cn/Product/Reader_Series/Motorized_Reader/2013081270.html]
+
+## WBM-98xx  Hybrid Card Reader/Writer
+![alt WBM98xx](https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM98xx.jpg)
+[http://www.wbe.com.cn/Product/Reader_Series/Insert_Readers/2013081280.html]
+
+## WBM-1300 Half-insert Magnetic Card Reader
+![alt WBM98xx](https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM1300.jpg)
+[http://www.wbe.com.cn/Product/Reader_Series/Insert_Readers/2013081279.html]
