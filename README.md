@@ -6,5 +6,5 @@ I have been working with the WBE Card readers for some time now and have decided
 # Supported Devices
 
 ## WBM-5000 Motorized Card Reader/Writer
-[[https://github.com/phpn00b/wbe_csharp_driver/blob/master/device_images/WBM98xx.png|alt=WBM98xx]]
+[[https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM1300.jpg|alt=WBM98xx]]
 [http://www.wbe.com.cn/Product/Reader_Series/Motorized_Reader/2013081270.html]
