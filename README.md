@@ -5,6 +5,10 @@ I have been working with the WBE Card readers for some time now and have decided
 
 If you need help with intergrating this with your project let me know... I also have java version of these that I will hopefully be posting soon. Check out my blog http://www.musingsofacodefiend.com/
 
+While the first two devices listed here support contactless reading and or writing currently the driver does not. 
+
+I have only implimented the functionality needed for my use case which is knowing when a card is inserted or removed and reading data off of track 2 of a magnetic card.
+
 # Supported Devices
 
 ## WBM-5000 Motorized Card Reader/Writer
@@ -18,3 +22,4 @@ http://www.wbe.com.cn/Product/Reader_Series/Insert_Readers/2013081280.html
 ## WBM-1300 Half-insert Magnetic Card Reader
 ![alt WBM98xx](https://raw.githubusercontent.com/phpn00b/wbe_csharp_driver/master/device_images/WBM1300.jpg)
 http://www.wbe.com.cn/Product/Reader_Series/Insert_Readers/2013081279.html
+currently only supports reading track 2 but can easily have other tracks supported
