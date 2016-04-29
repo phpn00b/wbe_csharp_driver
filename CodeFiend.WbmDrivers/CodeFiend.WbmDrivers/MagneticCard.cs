@@ -64,5 +64,18 @@
 		/// upstack programming for all devices.
 		/// </remarks>
 		public MagneticCardStatus Track3Status { get; set; }
+
+		public override string ToString()
+		{
+			return string.Format(
+				"Status: {0}\r\n" +
+				"\tTrack 1: {1} - {2}\r\n" +
+				"\tTrack 2: {3} - {4}\r\n" +
+				"\tTrack 3: {5} - {6}\r\n",
+				OverallStatus,
+				Track1Status, Track1,
+				Track2Status, Track2,
+				Track3Status, Track3);
+		}
 	}
 }

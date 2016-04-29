@@ -58,100 +58,107 @@ namespace CodeFiend.WbmDrivers.WBE
 		/// </summary>
 		private void ReaderThreadMain()
 		{
-			// this is if we are currently on a message
-			bool parseingMessage = false;
-
-			byte[] messageBytes = null;
-			byte[] lengthBytes = null;
-			short? messageLength = null;
-			bool isNormalCardRead = false;
-			while (_keepReading)
+			try
 			{
-				if (_serialPort.IsOpen)
+				// this is if we are currently on a message
+				bool parseingMessage = false;
+
+				byte[] messageBytes = null;
+				byte[] lengthBytes = null;
+				short? messageLength = null;
+				bool isNormalCardRead = false;
+				while (_keepReading)
 				{
-					byte b = (byte)_serialPort.ReadByte();
-					if (!parseingMessage && b == START_HEADER)
+					if (_serialPort.IsOpen)
 					{
-						//	Log("0x60 start");
-						parseingMessage = true;
-						messageBytes = null;
-						messageLength = null;
-						lengthBytes = new byte[2];
-						_readsSinceHeader = 0;
-						isNormalCardRead = false;
-					}
-					else if (!parseingMessage && b == NORMAL_READ_HEADER)
-					{
-						parseingMessage = true;
-						isNormalCardRead = true;
-						messageBytes = new byte[60];
-						messageLength = null;
-						lengthBytes = new byte[2];
-						_readsSinceHeader = 0;
-						messageBytes[_readsSinceHeader] = b;
-					}
-					else if (parseingMessage && !messageLength.HasValue & !isNormalCardRead)
-					{
-						if (_readsSinceHeader == 1)
+						byte b = (byte) _serialPort.ReadByte();
+						if (!parseingMessage && b == START_HEADER)
 						{
-							lengthBytes[1] = b;
-							//	Log("length b1");
+							//	Log("0x60 start");
+							parseingMessage = true;
+							messageBytes = null;
+							messageLength = null;
+							lengthBytes = new byte[2];
+							_readsSinceHeader = 0;
+							isNormalCardRead = false;
 						}
-						else if (_readsSinceHeader == 2)
+						else if (!parseingMessage && b == NORMAL_READ_HEADER)
 						{
-							lengthBytes[0] = b;
-							messageLength = BitConverter.ToInt16(lengthBytes, 0);
-							//Log(string.Format("length={0}", messageLength));
-							if (messageLength == 0)
+							parseingMessage = true;
+							isNormalCardRead = true;
+							messageBytes = new byte[60];
+							messageLength = null;
+							lengthBytes = new byte[2];
+							_readsSinceHeader = 0;
+							messageBytes[_readsSinceHeader] = b;
+						}
+						else if (parseingMessage && !messageLength.HasValue & !isNormalCardRead)
+						{
+							if (_readsSinceHeader == 1)
 							{
-								//Log("length 0 clear");
+								lengthBytes[1] = b;
+								//	Log("length b1");
+							}
+							else if (_readsSinceHeader == 2)
+							{
+								lengthBytes[0] = b;
+								messageLength = BitConverter.ToInt16(lengthBytes, 0);
+								//Log(string.Format("length={0}", messageLength));
+								if (messageLength == 0)
+								{
+									//Log("length 0 clear");
+									parseingMessage = false;
+								}
+								else
+								{
+									messageBytes = new byte[messageLength.Value + 4];
+									//Log(string.Format("[{0}]", messageBytes.Length));
+									messageBytes[0] = START_HEADER;
+									messageBytes[1] = lengthBytes[0];
+									messageBytes[2] = lengthBytes[1];
+								}
+							}
+						}
+						else if (parseingMessage && !isNormalCardRead)
+						{
+							if (_readsSinceHeader == messageLength.Value + 3)
+							{
+								//	Log("end of message");
+								messageBytes[_readsSinceHeader] = b;
+								ProcessMessage(messageBytes);
 								parseingMessage = false;
 							}
 							else
 							{
-								messageBytes = new byte[messageLength.Value + 4];
-								//Log(string.Format("[{0}]", messageBytes.Length));
-								messageBytes[0] = START_HEADER;
-								messageBytes[1] = lengthBytes[0];
-								messageBytes[2] = lengthBytes[1];
+								//	Log(string.Format("b#{0}={1:X2}", readsSinceHeader, b));
+								messageBytes[_readsSinceHeader] = b;
 							}
 						}
+						else if (parseingMessage)
+						{
+							if (b == NORMAL_READ_TERM)
+							{
+								messageBytes[_readsSinceHeader] = b;
+								parseingMessage = false;
+								isNormalCardRead = false;
+								ProcessMessage(messageBytes.Take(_readsSinceHeader).ToArray());
+							}
+							else
+							{
+								messageBytes[_readsSinceHeader] = b;
+							}
+						}
+						_readsSinceHeader++;
 					}
-					else if (parseingMessage && !isNormalCardRead)
+					else
 					{
-						if (_readsSinceHeader == messageLength.Value + 3)
-						{
-							//	Log("end of message");
-							messageBytes[_readsSinceHeader] = b;
-							ProcessMessage(messageBytes);
-							parseingMessage = false;
-						}
-						else
-						{
-							//	Log(string.Format("b#{0}={1:X2}", readsSinceHeader, b));
-							messageBytes[_readsSinceHeader] = b;
-						}
+						Thread.Sleep(10);
 					}
-					else if (parseingMessage)
-					{
-						if (b == NORMAL_READ_TERM)
-						{
-							messageBytes[_readsSinceHeader] = b;
-							parseingMessage = false;
-							isNormalCardRead = false;
-							ProcessMessage(messageBytes.Take(_readsSinceHeader).ToArray());
-						}
-						else
-						{
-							messageBytes[_readsSinceHeader] = b;
-						}
-					}
-					_readsSinceHeader++;
 				}
-				else
-				{
-					Thread.Sleep(10);
-				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
 			}
 		}
 
